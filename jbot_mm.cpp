@@ -313,7 +313,7 @@ const char *TheJbotPlugin::GetAuthor()
 
 const char *TheJbotPlugin::GetDescription()
 {
-	return "Sample basic plugin";
+	return "aweseome plugin";
 }
 
 const char *TheJbotPlugin::GetName()
