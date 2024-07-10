@@ -817,7 +817,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(HL2SDKTF2)\lib\public\tier0.lib;$(HL2SDKTF2)\lib\public\tier1.lib;$(HL2SDKTF2)\lib\public\vstdlib.lib;$(HL2SDKTF2)\lib\public\mathlib.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)sample_mm.dll</OutputFile>
+      <OutputFile>$(OutDir)jbot_mm.dll</OutputFile>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -1223,7 +1223,9 @@
     </ClCompile>
     <ClCompile Include="func.cpp" />
     <ClCompile Include="help.cpp" />
+    <ClCompile Include="help_hackedbypass.cpp" />
     <ClCompile Include="navigation.cpp" />
+    <ClCompile Include="nav_extended.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine_wrappers.h" />
@@ -1235,10 +1237,12 @@
     </ClInclude>
     <ClInclude Include="func.h" />
     <ClInclude Include="help.h" />
+    <ClInclude Include="help_hackedbypass.h" />
     <ClInclude Include="navigation.h" />
     <ClInclude Include="nav\CNavFile.h" />
     <ClInclude Include="nav\nav.h" />
     <ClInclude Include="nav\Vector.h" />
+    <ClInclude Include="nav_extended.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="nav\README.md" />

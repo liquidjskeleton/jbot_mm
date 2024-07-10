@@ -19,6 +19,7 @@
 #include "toolframework/itoolentity.h"
 #include "msvc10/botman.h"
 #include <IEngineTrace.h>
+#include "msvc10/help.h"
 //#define GAME_DLL 1
 //#include "player.h"
 
@@ -95,7 +96,7 @@ bool TheJbotPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen,
 
 	gpGlobals = ismm->GetCGlobals();
 
-	META_CONPRINTF("Starting plugin.");
+	META_CONPRINTF("Starting plugin.\n");
 
 	/* Load the VSP listener.  This is usually needed for IServerPluginHelpers. */
 	if ((vsp_callbacks = ismm->GetVSPInfo(NULL)) == NULL)
@@ -125,7 +126,8 @@ bool TheJbotPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen,
 	ConCommandBaseMgr::OneTimeInit(&s_BaseAccessor);
 #endif
 
-	
+	JBotManager::CallOnMapChange(gpGlobals->mapname.ToCStr());
+
 	return true;
 }
 
@@ -239,6 +241,7 @@ void TheJbotPlugin::Hook_ClientDisconnect(edict_t *pEntity)
 {
 	META_CONPRINTF("Hook_ClientDisconnect(%d)\n", IndexOfEdict(pEntity));
 }
+bool j_stopexecution = false;
 
 void TheJbotPlugin::Hook_GameFrame(bool simulating)
 {
@@ -248,7 +251,17 @@ void TheJbotPlugin::Hook_GameFrame(bool simulating)
 	 * true  | game is ticking
 	 * false | game is not ticking
 	 */
-	if (simulating)
+
+	//man i miss using c instead of c++
+	if (*((byte*)&j_stopexecution) == 1)
+	{
+		*((byte*)&j_stopexecution) = 2;
+		jprintf("----------------\n");
+		jprintf("stopped execution\n");
+		jprintf("----------------\n");
+	}
+
+	if (simulating && !j_stopexecution)
 	{
 		JBotManager::Bot_ThinkAll();
 	}

@@ -36,6 +36,12 @@
     <ClCompile Include="botclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="help_hackedbypass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nav_extended.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine_wrappers.h">
@@ -69,6 +75,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="botclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="help_hackedbypass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nav_extended.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,8 @@
 
 #include "nav.h"
 #include <fstream>
-#include <ISmmAPI.h>
+//#include <ISmmAPI.h>
+#include "../help_hackedbypass.h"
 class CNavFile
 {
 public:
@@ -27,6 +28,7 @@ public:
 		if (!fs.is_open())
 		{
 			//.nav file does not exist
+			jh_print("[jbot:warning] Could not find the nav mesh file for the current map\n");
 			return;
 		}
 

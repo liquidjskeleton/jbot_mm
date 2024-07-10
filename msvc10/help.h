@@ -10,7 +10,11 @@ extern ISmmAPI* g_SMAPI;
 #define jlogerror //while(1){} //cheap way to halt the console
 #define jdelay {jprint("(intentional delay)\n");unsigned long i=1; while(i){i++;}} //cheap way to delay the inevitable
 #define jhelp_start jhelp
-#define jhelp jprintf("helpme! %i\n",__LINE__);
+#define jhelp jprintf("helpme! %i\n",__LINE__); jdelay;
+
+//
+#define reintrp(value,castto) (*reinterpret_cast<castto*>(&value))
+
 #else
 
 #define jprint 
