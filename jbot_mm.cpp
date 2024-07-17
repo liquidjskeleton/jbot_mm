@@ -20,6 +20,7 @@
 #include "msvc10/botman.h"
 #include <IEngineTrace.h>
 #include "msvc10/help.h"
+#include "msvc10/yuh.h"
 //#define GAME_DLL 1
 //#include "player.h"
 
@@ -47,7 +48,7 @@ IServerGameDLL *server = NULL;
 IServerGameClients *gameclients = NULL;
 IVEngineServer *engine = NULL;
 IServerPluginHelpers *helpers = NULL;
-IGameEventManager2 *gameevents = NULL;
+IGameEventManager2 *gameeventmanager = NULL;
 IServerPluginCallbacks *vsp_callbacks = NULL;
 IPlayerInfoManager *playerinfomanager = NULL;
 ICvar *icvar = NULL;
@@ -55,6 +56,7 @@ CGlobalVars *gpGlobals = NULL;
 IServerTools *serverTools = NULL;
 IBotManager* botmanager = NULL;
 IEngineTrace* enginetrace = NULL;
+IServerGameEnts* serverGameEnts = 0;
 
 //ConVar sample_cvar("sample_cvar", "42", 0);
 
@@ -84,15 +86,18 @@ bool TheJbotPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen,
 	PLUGIN_SAVEVARS();
 
 	GET_V_IFACE_CURRENT(GetEngineFactory, engine, IVEngineServer, INTERFACEVERSION_VENGINESERVER);
-	GET_V_IFACE_CURRENT(GetEngineFactory, gameevents, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
+	GET_V_IFACE_CURRENT(GetEngineFactory, gameeventmanager, IGameEventManager2, INTERFACEVERSION_GAMEEVENTSMANAGER2);
 	GET_V_IFACE_CURRENT(GetEngineFactory, helpers, IServerPluginHelpers, INTERFACEVERSION_ISERVERPLUGINHELPERS);
 	GET_V_IFACE_CURRENT(GetEngineFactory, icvar, ICvar, CVAR_INTERFACE_VERSION);
+	GET_V_IFACE_CURRENT(GetEngineFactory, enginetrace, IEngineTrace, INTERFACEVERSION_ENGINETRACE_SERVER);
 	GET_V_IFACE_ANY(GetServerFactory, server, IServerGameDLL, INTERFACEVERSION_SERVERGAMEDLL);
 	GET_V_IFACE_ANY(GetServerFactory, gameclients, IServerGameClients, INTERFACEVERSION_SERVERGAMECLIENTS);
 	GET_V_IFACE_ANY(GetServerFactory, playerinfomanager, IPlayerInfoManager, INTERFACEVERSION_PLAYERINFOMANAGER);
 	GET_V_IFACE_ANY(GetServerFactory, serverTools, IServerTools, VSERVERTOOLS_INTERFACE_VERSION);
 	GET_V_IFACE_ANY(GetServerFactory, botmanager, IBotManager, INTERFACEVERSION_PLAYERBOTMANAGER);
-	//GET_V_IFACE_ANY(GetServerFactory, enginetrace, IEngineTrace, INTERFACEVERSION_ENGINETRACE_CLIENT);
+
+	//GET_V_IFACE_CURRENT(GetEngineFactory, serverGameEnts, IServerGameEnts, INTERFACEVERSION_SERVERGAMEENTS);
+	GET_V_IFACE_ANY(GetServerFactory, serverGameEnts, IServerGameEnts, INTERFACEVERSION_SERVERGAMEENTS);
 
 	gpGlobals = ismm->GetCGlobals();
 
@@ -126,13 +131,22 @@ bool TheJbotPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen,
 	ConCommandBaseMgr::OneTimeInit(&s_BaseAccessor);
 #endif
 
+	gameeventmanager->AddListener(static_cast<IGameEventListener2*>(this),"player_spawn", true);
+	gameeventmanager->AddListener(static_cast<IGameEventListener2*>(this),"player_death", true);
+	gameeventmanager->AddListener(static_cast<IGameEventListener2*>(this),"round_end", true);
+	gameeventmanager->AddListener(static_cast<IGameEventListener2*>(this),"player_say", true);
+
 	JBotManager::CallOnMapChange(gpGlobals->mapname.ToCStr());
+
+
 
 	return true;
 }
 
 bool TheJbotPlugin::Unload(char *error, size_t maxlen)
 {
+	gameeventmanager->RemoveListener(this);
+
 	SH_REMOVE_HOOK_MEMFUNC(IServerGameDLL, LevelInit, server, this, &TheJbotPlugin::Hook_LevelInit, true);
 	SH_REMOVE_HOOK_MEMFUNC(IServerGameDLL, ServerActivate, server, this, &TheJbotPlugin::Hook_ServerActivate, true);
 	SH_REMOVE_HOOK_MEMFUNC(IServerGameDLL, GameFrame, server, this, &TheJbotPlugin::Hook_GameFrame, true);
@@ -240,6 +254,7 @@ void TheJbotPlugin::Hook_ClientPutInServer(edict_t *pEntity, char const *playern
 void TheJbotPlugin::Hook_ClientDisconnect(edict_t *pEntity)
 {
 	META_CONPRINTF("Hook_ClientDisconnect(%d)\n", IndexOfEdict(pEntity));
+	JBotManager::Notify_Disconnect(pEntity);
 }
 bool j_stopexecution = false;
 
@@ -251,7 +266,7 @@ void TheJbotPlugin::Hook_GameFrame(bool simulating)
 	 * true  | game is ticking
 	 * false | game is not ticking
 	 */
-
+#if 0
 	//man i miss using c instead of c++
 	if (*((byte*)&j_stopexecution) == 1)
 	{
@@ -260,7 +275,8 @@ void TheJbotPlugin::Hook_GameFrame(bool simulating)
 		jprintf("stopped execution\n");
 		jprintf("----------------\n");
 	}
-
+#endif
+	static_counter++;
 	if (simulating && !j_stopexecution)
 	{
 		JBotManager::Bot_ThinkAll();
@@ -276,6 +292,7 @@ bool TheJbotPlugin::Hook_LevelInit(const char *pMapName,
 {
 	META_CONPRINTF("Hook_LevelInit(%s)\n", pMapName);
 	JBotManager::CallOnMapChange(pMapName);
+	JBotManager::Notify_RestartEverything();
 	return true;
 }
 
@@ -299,6 +316,34 @@ bool TheJbotPlugin::Unpause(char *error, size_t maxlen)
 	return true;
 }
 
+void TheJbotPlugin::FireGameEvent(IGameEvent* ievent)
+{
+	const char* eventName = ievent->GetName();
+	jprintf("new event %s\n", eventName);
+	if (!strcmp(eventName, "player_death"))
+	{
+		int uid = ievent->GetInt("userid");
+		edict_t* dic = UserIdToEdict(uid);
+		JBotManager::Notify_Death(dic);
+		jprintf("uid;%i,dic;%x\n",uid,dic);
+	}
+	if (!strcmp(eventName, "player_spawn"))
+	{
+		int uid = ievent->GetInt("userid");
+		edict_t* dic = UserIdToEdict(uid);
+		JBotManager::Notify_Spawn(dic);
+		jprintf("uid;%i,dic;%x\n", uid, dic);
+	}
+	if (!strcmp(eventName, "round_end"))
+	{
+		JBotManager::Notify_RoundEnd();
+	}
+	if (!strcmp(eventName, "player_say"))
+	{
+		//JBotManager::Notify_Death();
+	}
+}
+
 const char *TheJbotPlugin::GetLicense()
 {
 	return "unknown";
@@ -318,6 +363,8 @@ const char *TheJbotPlugin::GetLogTag()
 {
 	return "SAMPLE";
 }
+
+
 
 const char *TheJbotPlugin::GetAuthor()
 {

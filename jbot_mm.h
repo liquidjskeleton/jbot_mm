@@ -25,7 +25,7 @@
 #define snprintf _snprintf
 #endif
 
-class TheJbotPlugin : public ISmmPlugin, public IMetamodListener
+class TheJbotPlugin : public ISmmPlugin, public IMetamodListener, public IGameEventListener2
 {
 public:
 	bool Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late);
@@ -60,6 +60,9 @@ public: //hooks
 #else
 	void Hook_ClientCommand(edict_t *pEntity);
 #endif
+
+	void FireGameEvent(IGameEvent* ievent);
+
 public:
 	const char *GetAuthor();
 	const char *GetName();

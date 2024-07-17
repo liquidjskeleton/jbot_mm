@@ -42,6 +42,18 @@
     <ClCompile Include="nav_extended.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="yuh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="netprops.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="curmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="botprofile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine_wrappers.h">
@@ -81,6 +93,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nav_extended.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="teamfortress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="yuh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="netprops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="curmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="botprofile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

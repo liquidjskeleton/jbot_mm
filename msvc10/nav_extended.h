@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <ISmmAPI.h>
-
+#include "yuh.h"
 //extended functionality for valve's nav meshes for my bots to use smiley face
 struct JNavCell;
 class JNavExtended;
@@ -21,6 +21,7 @@ typedef std::vector<JNav_Snag> JNavSnags;
 
 struct JNavCell_TeamData
 {
+	float popularity;
 	float danger;
 };
 struct JNavCell
@@ -30,7 +31,7 @@ public:
 	JNavCell_TeamData team_data[2];
 	JNavSnags snags;
 
-	void CreateSnag(CNavArea* area, Vector position);
+	void CreateSnag(CNavArea* area, Vector position,Vector wishdir);
 	float Cell_Score(CNavArea* area, int id);
 };
 class JNavExtended

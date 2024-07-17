@@ -12,6 +12,15 @@ static class JBotManager
 	static void Bot_ThinkAll();
 	static void RemoveBot(edict_t* num);
 	static void CallOnMapChange(const char* newmapname);
+	static void Notify_Death(edict_t* victim);
+	static void Notify_Spawn(edict_t* victim);
+	static void Notify_Disconnect(edict_t* dudewhodidit);
+	static void Notify_RoundEnd();
+
+	//call on map level change or similar
+	static void Notify_RestartEverything();
+
+	static void Debug_VisualizePath(int botindex);
 private:
 	static void Bot_Think(int index);
 };

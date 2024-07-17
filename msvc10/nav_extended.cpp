@@ -28,25 +28,15 @@ JNavCell* JNavExtended::GetCellFromAreaIndex(int index)
 	return &cells.at(index);
 }
 
-void JNavCell::CreateSnag(CNavArea* area, Vector position)
+void JNavCell::CreateSnag(CNavArea* area, Vector position,Vector wishdir)
 {
 	auto cell = navhubex.GetCellFromArea(area);
 	JNav_Snag snag = JNav_Snag();
 
-	Vector best_direction;
-	float biggest_size = -1;
-	for (int i = 0; i < area->m_connections.size(); i++)
-	{
-		float size = VectorLength(area->m_connections[i].area->m_center - position);
-		if (size > biggest_size)
-		{
-			biggest_size = size;
-			best_direction = area->m_connections[i].area->m_center;
-		}
-	}
-
-	snag.position = position - best_direction;
-	snag.size = 120;
+	Vector best_direction = wishdir.Normalized() * 60;
+	
+	snag.position = position + best_direction;
+	snag.size = 160;
 	cell->snags.push_back(snag);
 }
 
