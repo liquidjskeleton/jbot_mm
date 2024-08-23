@@ -1,3 +1,10 @@
+THIS IS UNFINISHED. and i probably wont finish this
+
+this is a mm:s plugin for tf2 intended to create Realistic and Believable player bots. intended to replace tf2's stock tfbot system
+
+
+mm:s readme is beloww
+
 For more information on compiling and reading the plugin's source code, see:
 
 	http://wiki.alliedmods.net/Category:Metamod:Source_Development
