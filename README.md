@@ -1,3 +1,16 @@
+# jbot_mm
+
+HEY ALL THIS IS NOW PUBLIC FOR EVERYONE SINCE TF2 GOT A PROPER SDK RELEASE
+
+THIS IS PUBLIC NOW SO THAT YALL CAN SEE HOW TERRIBLE THINGS USED TO BE
+
+i would not recommend yall actually build this since this is for a real old version of tf2 and i obviously have not updated the datatables
+
+also this doesnt even WORK (properly, how I want it to). LOL!!!!
+
+old readme
+------
+
 THIS IS UNFINISHED. and i probably wont finish this
 
 this is a mm:s plugin for tf2 intended to create Realistic and Believable player bots. intended to replace tf2's stock tfbot system
